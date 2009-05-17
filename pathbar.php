@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Pathbar
-Plugin URI: http://www.hyper-world.de/en/computer-2/pathbar/
-Description: This plugin shows the path to the page or post the user is currently surfing.
-Version: 1.1
+Plugin URI:
+Description: This plugin adds the possiblity to show the path to a static page.
+Version: 1.2
 Author: Jan Gosmann
 Author URI: http://www.hyper-world.de
 */
@@ -34,8 +34,14 @@ function the_pathbar( $elements = '' )
           $path = '<a href="' . get_page_link( $parent->ID ) . '">'
               . $title . '</a>' . $divider . $path;
         }
+       $path = $blog_link . $divider . $path;
       }
-      $path = $blog_link . $divider . $path;
+      else {
+        if( get_option( 'pathbar_postdate' ) == "pathbar_postdate" )
+          $path = $blog_link . $divider . "<a href=\"" . get_year_link( get_the_time( 'Y' ) ) . "\">" . get_the_time( 'Y' ) . "</a>" . $divider . "<a href=\"" . get_month_link( get_the_time( 'Y' ), get_the_time( 'm' ) ) . "\">" . get_the_time( 'F' ) . "</a>" . $divider . $path;
+        else
+	  $path = $blog_link . $divider . $path;
+      }
     }
     else {
       if( is_category() ) {
@@ -103,6 +109,8 @@ function pathbar_install()
 			'This is the text for the pathbar link to the home or main blog site.' );
 	add_option( 'pathbar_divider', '&nbsp;&gt;&nbsp;',
 			'String which divides the links in the pathbar.' );
+	add_option( 'pathbar_postdate', 'pathbar_postdate',
+	                'Set to pathbar_postdate to display links to the year and moth archive if a post is displayed.' );
 }
 
 //------------------------------------------------------------------------------
@@ -122,12 +130,14 @@ function pathbar_confpage()
 	if( $_POST['pathbar_update_options'] == 'Save' ) {
 		update_option( 'pathbar_home', $_POST['pathbar_home'] );
 		update_option( 'pathbar_divider', $_POST['pathbar_divider'] );
+		update_option( 'pathbar_postdate', $_POST['pathbar_postdate'] );
 	}
 
 	$home = get_option( 'pathbar_home' );
 	$home = str_replace( '&', '&amp;', $home);
 	$divider = get_option( 'pathbar_divider' );
 	$divider = str_replace( '&', '&amp;', $divider );
+	$postdate = get_option( 'pathbar_postdate' );
 
 	?>
 		<div class="wrap" id="pathbar_confpage">
@@ -135,6 +145,7 @@ function pathbar_confpage()
 			<form method="post">
 				Home title: <input type="text" name="pathbar_home" value="<?php echo $home; ?>" /><br />
 				Divider: <input type="text" name="pathbar_divider" value="<?php echo $divider; ?>" /><br />
+				<input type="checkbox" name="pathbar_postdate" value="pathbar_postdate" <?php echo ($postdate == "pathbar_postdate") ? "checked=\"checked\"" : ""; ?> /> Show link to year and month archives when displaying a post.<br />
 				<p class="submit">
 					<input type="submit" name="pathbar_update_options" value="Save"/>
 				</p>
