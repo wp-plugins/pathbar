@@ -3,8 +3,8 @@ Contributors: blubbx
 Donate link:
 Tags: pathbar, navigation, plugin, path
 Requires at least: 2.3
-Tested up to: 2.5.1
-Stable tag: 1.1
+Tested up to: 2.7.1
+Stable tag: 1.2
 
 This plugin shows the path to the page or post the user is currently surfing.
 
